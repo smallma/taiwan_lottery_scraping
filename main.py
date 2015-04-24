@@ -18,25 +18,30 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 links = []
-for j in range(3):
-    year = j + 102
-    for i in range(200):
-        counter = '0'
-        if (i ) > 9:
-            counter = `(i)`
-        else:
-            counter += `(i)`
 
-        links.append('http://lotto.9800.com.tw/649/' + `year` + '0' + counter + '.html')
+for kind in ['649', '539', '38']:
+    for j in range(3):
+        year = j + 102
+        counter = '0'
+        for i in range(1, 400):
+            if (i ) > 99:
+                counter = `(i)`
+            elif i < 10:
+                counter = '00' + `(i)`
+            else:
+                counter = '0' + `(i)`
+
+            links.append('http://lotto.9800.com.tw/' + kind + '/' + `year` + counter + '.html')
 print links
 
-# links = ['http://lotto.9800.com.tw/649/102011.html']
+# links = ['http://lotto.9800.com.tw/539/102001.html']
 
 lottery_list = open('lottery_list.txt','w')
 lottery_list.write('{ "drawsInfo": [\n')
 shop_links = []
 for link in links:
-    print link
+
+    print '\n\n * ' + link
 
     try:
         html = urllib2.urlopen(link);
@@ -53,8 +58,12 @@ for link in links:
     typeId = 0
     try:
         title = section.find('h1').getText()
+        if '威力彩' in title:
+            typeId = 2
         if '大樂透' in title:
             typeId = 4
+        if '539' in title:
+            typeId = 6
     except Exception as e:
         title = ''
 
@@ -66,6 +75,9 @@ for link in links:
         td_balls = []
 
 
+    drawNo = ''
+    drawUnixTime = ''
+
     try:
         desciption = section.find('div', id='info').getText()
         drawNo = desciption.split(' | ')[0].split('：')[1]
@@ -74,10 +86,8 @@ for link in links:
         ms = mktime(start.timetuple())
         ms += 72000
         drawUnixTime = datetime.fromtimestamp(ms).strftime('%Y-%m-%d %H:%M:%S')
-        print drawUnixTime
     except Exception as e:
-        drawNo = ''
-        drawUnixTime = ''
+        pass
 
 
     numbers = []
@@ -93,12 +103,14 @@ for link in links:
             pass
 
 
-    print title + desciption
-    print 'special: ' + special
-    print 'numbers: ' + str(numbers)
+    # print title + desciption
+    # print 'special: ' + special
+    # print 'numbers: ' + str(numbers)
 
-    results = '{ "title": "' + title + '", "typeId": ' + str(typeId) + ',  "drawNo": "' + drawNo + '", "drawDate": "' + drawUnixTime + '", "special": [' + str(int(special)) + '], "winningNumbers": ' + str(numbers) + ' },'
+    results = '{ "title": "' + title + '", "typeId": ' + str(typeId) + ',  "drawNo": "' + drawNo + '", "drawDate": "' + drawUnixTime + '", "special": [' + special + '], "winningNumbers": ' + str(numbers) + ' },'
 
+
+    print results
 
     lottery_list.write(results + "\n")
     
