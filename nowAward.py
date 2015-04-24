@@ -6,7 +6,7 @@ import urllib2
 from urllib import urlopen
 
 
-# reload(sys)
+reload(sys)
 sys.setdefaultencoding('utf8')
 
 links = []
@@ -24,17 +24,32 @@ except Exception, e:
 
 
 try:
-    section = soup.find('div', {'class': 'top_dollar_tx'})
+    sections = soup.find_all('div', {'class': 'top_dollar_tx'})
 except Exception as e:
-    section = ''
+    sections = []
 
-try:
-    tables = section.find_all('div', {'class': 'top_dollar'})
-    award = tables.getText()
-except Exception as e:
-    award = ''
 
-lottery_list.write('award: ' + award + '\n')
+
+for section in sections:
+	top_dollar = section.find('div', {'class', 'top_dollar'})
+	print top_dollar.getText().strip()
+	
+
+# try:
+#     section = soup.find('div', {'class': 'top_dollar_tx'})
+# except Exception as e:
+#     section = ''
+
+# try:
+#     tables = section.find_all('div', {'class': 'top_dollar'})
+#     for table in tables:
+#     	award = tables.getText().encode('utf-8')
+#     	print award
+#     	lottery_list.write('award: ' + award + '\n')
+
+# except Exception as e:
+#     pass
+
 sys.stdout.flush()
 
 lottery_list.close()
