@@ -7,6 +7,12 @@ import sys
 import re
 import urllib2
 from urllib import urlopen
+
+from datetime import date
+from time import mktime
+from time import strftime
+from datetime import datetime
+
  
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -24,11 +30,11 @@ for j in range(3):
         links.append('http://lotto.9800.com.tw/649/' + `year` + '0' + counter + '.html')
 print links
 
-# links = ['http://lotto.9800.com.tw/649/102001.html']
+# links = ['http://lotto.9800.com.tw/649/102011.html']
 
 lottery_list = open('lottery_list.txt','w')
-
-shop_links=[]
+lottery_list.write('{ "drawsInfo": [\n')
+shop_links = []
 for link in links:
     print link
 
@@ -44,11 +50,11 @@ for link in links:
     except Exception as e:
         section = ''
 
-    lotteryType = 0
+    typeId = 0
     try:
         title = section.find('h1').getText()
         if '大樂透' in title:
-            lotteryType = 1
+            typeId = 4
     except Exception as e:
         title = ''
 
@@ -63,19 +69,24 @@ for link in links:
     try:
         desciption = section.find('div', id='info').getText()
         drawNo = desciption.split(' | ')[0].split('：')[1]
-        drawDate = desciption.split(' | ')[1].split('：')[1]
+        drawDate = desciption.split(' | ')[1].split('：')[1].split('-')
+        start = date(int(drawDate[0]), int(drawDate[1]), int(drawDate[2]))
+        ms = mktime(start.timetuple())
+        ms += 72000
+        drawUnixTime = datetime.fromtimestamp(ms).strftime('%Y-%m-%d %H:%M:%S')
+        print drawUnixTime
     except Exception as e:
         drawNo = ''
-        drawDate = ''
+        drawUnixTime = ''
 
 
     numbers = []
-    specialNum = '';
+    special = '';
     for td_ball in td_balls:
         try:
             specialDom =  td_ball.find('font')
             if specialDom:
-                specialNum = specialDom.getText().encode('utf-8')
+                special = specialDom.getText().encode('utf-8')
             else:
                 numbers.append(int(td_ball.getText().encode('utf-8')))
         except Exception as e:
@@ -83,16 +94,17 @@ for link in links:
 
 
     print title + desciption
-    print 'specialNum: ' + specialNum
+    print 'special: ' + special
     print 'numbers: ' + str(numbers)
 
-    results = '{ "title": "' + title + '", "lotteryType": ' + str(lotteryType) + ',  "drawNo": "' + drawNo + '", "drawDate": "' + drawDate + '", "specialNum": ' + specialNum.encode("utf-8") + ', "normalNums": ' + str(numbers) + ' }'
+    results = '{ "title": "' + title + '", "typeId": ' + str(typeId) + ',  "drawNo": "' + drawNo + '", "drawDate": "' + drawUnixTime + '", "special": [' + str(int(special)) + '], "winningNumbers": ' + str(numbers) + ' },'
 
 
     lottery_list.write(results + "\n")
     
     
-    time.sleep(randint(1,5))
+    time.sleep(randint(1, 2))
     sys.stdout.flush()
- 
+
+lottery_list.write("]}\n")
 lottery_list.close()
