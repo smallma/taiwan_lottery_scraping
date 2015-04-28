@@ -12,6 +12,7 @@ from datetime import date
 from time import mktime
 from time import strftime
 from datetime import datetime
+import datetime
 
  
 reload(sys)
@@ -36,7 +37,9 @@ print links
 
 # links = ['http://lotto.9800.com.tw/539/102001.html']
 
-lottery_list = open('lottery_list.txt','w')
+nowTime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+
+lottery_list = open('lottery_list_' + str(nowTime)+ '.txt','w')
 lottery_list.write('{ "drawsInfo": [\n')
 shop_links = []
 for link in links:
@@ -96,7 +99,7 @@ for link in links:
         try:
             specialDom =  td_ball.find('font')
             if specialDom:
-                special = specialDom.getText().encode('utf-8')
+                special = int(specialDom.getText().encode('utf-8'))
             else:
                 numbers.append(int(td_ball.getText().encode('utf-8')))
         except Exception as e:
