@@ -9,7 +9,7 @@ def getHtml(url):
     return soup
 
 
-def find_all(soup, dom, attrs):
+def find_all(soup, dom, attrs=''):
     try:
         if attrs:
             sections = soup.find_all(dom, attrs)
@@ -22,12 +22,21 @@ def find_all(soup, dom, attrs):
     return sections
 
 
-def find(soup, dom, attrs):
+def find(soup, dom, attrs=''):
     try:
         if attrs:
             sections = soup.find(dom, attrs)
         else:
             sections = soup.find(dom)
+    except Exception, e:
+        print e
+        sections = ''
+
+    return sections
+
+def findById(soup, dom, id):
+    try:
+        sections = soup.find(dom, id=id)
     except Exception, e:
         print e
         sections = ''
