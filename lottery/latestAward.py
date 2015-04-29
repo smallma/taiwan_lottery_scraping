@@ -3,56 +3,66 @@
 from common import scraping
 
 layoutSections = ['contents_box01', 'contents_box02', 'contents_box03', 'contents_box04']
-mappingMap = {
+lotteryMap = {
 	'contents_logo_01': {
-		'name': u'BINGO BINGO',
+		'name': 'BINGO BINGO',
 		'normalCount': 10,
-		'specialCount': 1
+		'specialCount': 1,
+		'typeId': 1,
 	},
 	'contents_logo_02': {
-		'name': u'威力彩',
+		'name': '威力彩',
 		'normalCount': 6,
-		'specialCount': 1
+		'specialCount': 1,
+		'typeId': 2,
 	},
 	'contents_logo_03': {
-		'name': u'38樂合彩',
+		'name': '38樂合彩',
 		'normalCount': 6,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 3,
 	},
 	'contents_logo_04': {
-		'name': u'大樂透',
+		'name': '大樂透',
 		'normalCount': 6,
-		'specialCount': 1
+		'specialCount': 1,
+		'typeId': 4,
 	},
 	'contents_logo_05': {
-		'name': u'49樂合彩',
+		'name': '49樂合彩',
 		'normalCount': 6,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 5,
 	},
 	'contents_logo_06': {
-		'name': u'今彩539',
+		'name': '今彩539',
 		'normalCount': 5,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 6,
 	},
 	'contents_logo_07': {
-		'name': u'39樂合彩',
+		'name': '39樂合彩',
 		'normalCount': 5,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 7,
 	},
 	'contents_logo_08': {
-		'name': u'3星彩',
+		'name': '3星彩',
 		'normalCount': 3,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 8,
 	},
 	'contents_logo_09': {
-		'name': u'4星彩',
+		'name': '4星彩',
 		'normalCount': 4,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 9,
 	},
 	'contents_logo_10': {
-		'name': u'大福彩',
+		'name': '大福彩',
 		'normalCount': 7,
-		'specialCount': 0
+		'specialCount': 0,
+		'typeId': 10,
 	}
 }
 
@@ -60,27 +70,46 @@ mappingMap = {
 def get():
     url = 'http://www.taiwanlottery.com.tw/index_new.aspx'
     html = scraping.getHtml(url)
-    # print html
-    
+    awards = []
+
     for layoutSection in layoutSections:
     	drawSections = scraping.find_all(html, 'div', {'class', layoutSection})
     	for section in drawSections:
+    		award = {
+    			# 'title': '',
+    			# 'name': '',
+    			'drawNo': '',
+    			'typeId': '',
+    			'special': [],
+    			'noraml': []
+    		}
+
     		divs = section.find_all('div')
     		name = divs[0].get('id')
-    		print mappingMap[name]['name'] + ': ' + str(mappingMap[name]['normalCount'])
-    		specialCount = mappingMap[name]['normalCount']
-    		normalCount = mappingMap[name]['normalCount']
+    		specialCount = lotteryMap[name]['normalCount']
+    		normalCount = lotteryMap[name]['normalCount']
+    		
+    		# award['name'] = lotteryMap[name]['name'].decode('utf8')
 
     		title = section.find('span', {'class', 'font_black15'})
-    		print 'title: ' + title.getText()
-    		
-    		if specialCount:
+    		# award['title'] = title.getText().decode('utf8')
+    		award['drawNo'] = str(title.getText().split(' 第')[1].split('期')[0])
+    		award['drawDate'] = str(title.getText().split(' 第')[0])
+    		award['typeId'] = lotteryMap[name]['typeId']
+
+    		if specialCount > 0:
+    			i = 0
     			ballReds = section.find_all('div', {'class', 'ball_red'})
     			for ballRed in ballReds:
-    				print 'Special Num: ' + str(int(ballRed.getText()))
+    				if i > specialCount:
+    					continue
+    				i += 1
+    				award['special'].append(int(ballRed.getText()))
 
-    		normalDivs = section.find_all('div', {'class', 'ball_tx'})	
+
+    		normalDivs = section.find_all('div', {'class', 'ball_tx'})
     		for i in range(normalCount):
-    			print 'noraml num: ' + normalDivs[i].getText()
+    			award['noraml'].append(int(normalDivs[i].getText()))
 
-    		print '-------------------------\n'
+    		awards.append(award)
+    return awards

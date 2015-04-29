@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 
 
 def getHtml(url):
-    html = urllib2.urlopen(url)
-    soup = BeautifulSoup(html, fromEncoding="GB2312")
+    html = urllib2.urlopen(url).read()
+    soup = BeautifulSoup(html, fromEncoding="GB18030")
     return soup
 
 
