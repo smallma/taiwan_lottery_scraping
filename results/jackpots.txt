@@ -1,0 +1,1 @@
+{"jackpots": [{"typeId": 2, "money": 200000000}, {"typeId": 4, "money": 191374902}, {"typeId": 10, "money": 100000000}]}

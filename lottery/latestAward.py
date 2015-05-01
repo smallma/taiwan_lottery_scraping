@@ -2,7 +2,7 @@
 
 from common import scraping
 
-layoutSections = ['contents_box01', 'contents_box02', 'contents_box03', 'contents_box04']
+layoutSections = ['contents_box01', 'contents_box02', 'contents_box03', 'contents_box04', 'contents_box05']
 lotteryMap = {
 	'contents_logo_01': {
 		'name': 'BINGO BINGO',
@@ -81,7 +81,7 @@ def get():
     			'drawNo': '',
     			'typeId': '',
     			'special': [],
-    			'noraml': []
+    			'winningNumbers': []
     		}
 
     		divs = section.find_all('div')
@@ -109,7 +109,7 @@ def get():
 
     		normalDivs = section.find_all('div', {'class', 'ball_tx'})
     		for i in range(normalCount):
-    			award['noraml'].append(int(normalDivs[i].getText()))
+    			award['winningNumbers'].append(int(normalDivs[i].getText()))
 
     		awards.append(award)
     return awards
