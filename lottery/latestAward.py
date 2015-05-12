@@ -94,7 +94,8 @@ def get():
     		title = section.find('span', {'class', 'font_black15'})
     		# award['title'] = title.getText().decode('utf8')
     		award['drawNo'] = str(title.getText().split(' 第')[1].split('期')[0])
-    		award['drawDate'] = str(title.getText().split(' 第')[0])
+    		awardDate = str(title.getText().split(' 第')[0]).split('/')
+    		award['drawDate'] = str(int(awardDate[0]) + 1911) + '/' + awardDate[1] + '/' + awardDate[2]
     		award['typeId'] = lotteryMap[name]['typeId']
 
     		if specialCount > 0:

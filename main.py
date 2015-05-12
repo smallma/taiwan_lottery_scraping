@@ -1,3 +1,4 @@
+#!/user/bin/env python
 #-*- coding: UTF-8 -*- 
 
 import datetime
@@ -9,7 +10,7 @@ from parse_rest.connection import register, ParseBatcher
 from parse_rest.datatypes import Function
 
 from lottery import latestAward, jackpot
-from test import pytesser
+# from test import pytesser
 from config import parse
 
 reload(sys)
@@ -32,10 +33,10 @@ def _getLatestAward():
 	# latestAwardFile.write(str(latestAwardResults).replace('\'', '"'))
 	# latestAwardFile.close()
 
-	print '  upload latest award   '
+	# print '  upload latest award   '
 	latestAward_func = Function("createDrawsInfo")
 	latestAward_func(drawsInfo=latestAwardResults)
-	print '=== ===== end ===== ==='
+	# print '=== ===== end ===== ==='
 
 def _getJackpot():
 	print '=== jackpots ==='
@@ -45,22 +46,20 @@ def _getJackpot():
 	# jackpotFile.write(str(jackpotResults).replace('\'', '"'))
 	# jackpotFile.close()
 
-	print '    upload jackpots   '
+	# print '    upload jackpots   '
 	updateJackpots_func = Function("updateJackpots")
 	updateJackpots_func(jackpots=jackpotResults['jackpots'])
-	print '=== ===== end ===== ==='
+	# print '=== ===== end ===== ==='
 
 def main():
-	register(APPLICATION_ID, REST_API_KEY)
-
 	# _getJackpot()
 	# _getLatestAward()
-	schedule.every(5).minutes.do(_getJackpot)
-	schedule.every(5).minutes.do(_getLatestAward)
-	# schedule.every().hour.do(_getLatestAward)
-	# # schedule.every().day.at("10:30").do(job)
-	# # schedule.every().monday.do(job)
-	# # schedule.every().wednesday.at("13:15").do(job)
+
+	register(APPLICATION_ID, REST_API_KEY)
+
+
+	schedule.every(1).minutes.do(_getJackpot)
+	schedule.every(1).minutes.do(_getLatestAward)
 
 	while True:
 	    schedule.run_pending()
