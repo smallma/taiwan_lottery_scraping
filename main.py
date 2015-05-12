@@ -26,11 +26,11 @@ REST_API_KEY = parse.getApiKey()
 
 def _getLatestAward():
 	print '=== latest award ==='
-	nowTime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+	# nowTime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 	latestAwardResults = latestAward.get()
-	latestAwardFile = open('results/latestAward.txt', 'w')
-	latestAwardFile.write(str(latestAwardResults).replace('\'', '"'))
-	latestAwardFile.close()
+	# latestAwardFile = open('results/latestAward.txt', 'w')
+	# latestAwardFile.write(str(latestAwardResults).replace('\'', '"'))
+	# latestAwardFile.close()
 
 	print '  upload latest award   '
 	latestAward_func = Function("createDrawsInfo")
@@ -39,11 +39,11 @@ def _getLatestAward():
 
 def _getJackpot():
 	print '=== jackpots ==='
-	nowTime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+	# nowTime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 	jackpotResults = jackpot.get()
-	jackpotFile = open('results/jackpots.txt', 'w')
-	jackpotFile.write(str(jackpotResults).replace('\'', '"'))
-	jackpotFile.close()
+	# jackpotFile = open('results/jackpots.txt', 'w')
+	# jackpotFile.write(str(jackpotResults).replace('\'', '"'))
+	# jackpotFile.close()
 
 	print '    upload jackpots   '
 	updateJackpots_func = Function("updateJackpots")
@@ -55,8 +55,8 @@ def main():
 
 	# _getJackpot()
 	# _getLatestAward()
-	schedule.every(1).minutes.do(_getJackpot)
-	schedule.every(1).minutes.do(_getLatestAward)
+	schedule.every(5).minutes.do(_getJackpot)
+	schedule.every(5).minutes.do(_getLatestAward)
 	# schedule.every().hour.do(_getLatestAward)
 	# # schedule.every().day.at("10:30").do(job)
 	# # schedule.every().monday.do(job)
